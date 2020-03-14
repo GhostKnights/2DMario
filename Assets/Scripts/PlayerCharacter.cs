@@ -27,6 +27,8 @@ public class PlayerCharacter : MonoBehaviour
     Animator playerAnim;
     AnimatorStateInfo stateInfo;
 
+    bool isJumping = false;
+
     void Start ()
     {
         Init();
@@ -42,7 +44,17 @@ public class PlayerCharacter : MonoBehaviour
             return;
         }
 
-        var h = Input.GetAxis("Horizontal");
+        float h = Input.GetAxis("Horizontal");
+
+        if (Input.GetKey(KeyCode.J))
+        {
+            h = h * 3.0f;
+            anim.speed = 3;
+        }
+        else
+        {
+            anim.speed = 1;
+        }
 
         if (!isDead)
         { Move(h); }
@@ -58,9 +70,19 @@ public class PlayerCharacter : MonoBehaviour
             Reverse();
         }
 
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        if (Input.GetKey(KeyCode.Space))
         {
-            Jump();
+            if (!isJumping)
+            {
+                if (isGrounded)
+                {
+                    Jump();
+                }
+            }
+        }
+        else
+        {
+            isJumping = false;
         }
 
         //if(!isDead)
@@ -104,7 +126,7 @@ public class PlayerCharacter : MonoBehaviour
     void Jump()
     {
         //rig2d.AddForce(new Vector2(0, jumpHeight));
-        rig2d.velocity = new Vector2(rig2d.velocity.x, jumpSpeed);
+        rig2d.velocity = new Vector2(rig2d.velocity.x, 0.3f*Mathf.Abs(rig2d.velocity.x)+jumpSpeed);
     }
 
     void CheckIsGrounded()
